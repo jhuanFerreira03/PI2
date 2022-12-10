@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Recarregar Bilhete</title>
+	<link rel="stylesheet" type="text/css" href="/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/css/estilo.css">
+	<script src="/javascript/front.js"></script>
+</head>
+<body>
+	<div id="principal">
+		<form action="/tela_formulario2" method="post">
+		<!--<div class="sla1" id="div_top_recarga"><h1 style="font-weight:bold;">Recarga de Bilhete</h1></div>-->
+		<div style="padding-bottom: 100px;">
+		</div>
+		<div class="sla">
+			<div class="sla1" style="padding-top: 10px;">
+				<input id="cod_re" name="cod_bilhete" placeholder="Digite o Codigo do Bilhete">
+			</div>
+		</div>
+		<div>
+			<h1 class="sla1" style="color: black; font-weight: bold;">Escolha a opção de recarga:</h1>
+			<div style="padding-bottom: 10px;"></div>
+		</div>
+		<main>
+			<ul class="produtos">
+				<a href="javascript: Escolher('40_min');"><li id="40_min" class="">
+					<h2>Bilhete Unico</h2>
+					
+					<p class="produto_descricao">O bilhete único pode ser usado uma única vez em qualquer transporte desejado, desde que esteja dentro do período de 40 minutos.</p>
+					<br><br>
+					<p class="preco">Valor: <span class="vermelho">R$10,00</span></p>
+				</li></a>
+	
+				<a href="javascript: Escolher('duplo');"><li id="duplo" class="">
+					<h2>Bilhete Duplo</h2>
+					
+					<p class="produto_descricao">O bilhete duplo pode ser utilizado duas vezes, em qualquer tipo de transporte desejado, desde que esteja dentro do período de 40 minutos após sua primeira utilização.</p>
+					<br>
+					<p class="preco">Valor: <span class="vermelho">R$15,00</span></p>
+				</li></a>
+	
+				<a href="javascript: Escolher('7_dias');"><li id="7_dias" class="">
+					<h2>Bilhete de Sete Dias</h2>
+		
+					<p class="produto_descricao">O bilhete 7 dias pode ser utilizado quantas vezes for necessário, desde que esteja em um intervalo de 7 dias após seu primeiro uso.</p>
+					<br><br>
+					<p class="preco">Valor: <span class="vermelho">R$20,00</span></p>
+				</li></a>
+
+				<a href="javascript: Escolher('30_dias');"><li id="30_dias" class="">
+					<h2>Bilhete De Trinta Dias</h2>
+					<p class="produto_descricao">O bilhete de 30 dias pode ser utilizado quantas vezes for necessário, desde que esteja dentro do período de 30 dias após seu primeiro uso.</p>
+					<br><br>
+					<p class="preco">Valor: <span class="vermelho">R$25,00</span></p>
+				</li></a>
+				<input type="text" style="display:none;" id="tipo_recarga">
+			</ul>
+		</main>
+		<div>
+			<span id="div_voltar" class="sla1">
+				<input id="btn_voltar_recarga" type="button" name="btn_voltar_recarga" value="Voltar" onclick="Voltar_Princ();">
+			</span>
+			<span id="div_avancar" class="sla1">
+				<!--<input id="btn_avancar_recarga" type="submit" value="Avançar" onclick="avancar(); Recarregar();">-->
+				<input id="btn_avancar_recarga" type="button" name="btn_avancar_recarga" value="Avançar" onclick="Abrir('confirmacao_recarga');">
+			</span>
+		</div>
+		<div id="confirmacao_recarga" class="popup">
+			<div class="sla1" style="color: red; font-weight: bold; font-size: 2em;">CONFIRMAÇÃO</div>
+			<div class="sla1" style="padding: 60px;">
+				<div id="confirma_codigo" class="confirma_dados_recarga">Codigo do Bilhete:</div>
+				<div id="confirma_tipo" class="confirma_dados_recarga">Tipo de Recarga:</div>
+				<div id="confirma_valor" class="confirma_dados_recarga">Valor:</div>
+				<input type="text" style="display: none;" id="salvar_tipo" name="salvar_tipo">
+				<input type="text" style="display: none;" id="salvar_valor" name="salvar_valor">
+				<input type="text" style="display: none;" id="salvar_data" name="salvar_data">
+			</div>
+			<div class="sla1">
+				<div id="data_escolha">...</div>
+			</div>
+			<div class="sla1">
+				<div style="margin-bottom: 5px;"><input id="btn_salvar_recarga" type="button" id="Enviar" value="Pagar e Salvar" onclick="Confirmacao()"></div>
+				<div><input id="btn_cancelar_recarga" type="button" value="Cancelar" onclick="Fechar('confirmacao_recarga');"></div>
+			</div>
+			<div id="confirmacao" class="popup">
+				<div class="sla"></div>
+				<div class="sla"><h2 style="color: green;">Recarga efetuada com sucesso</h2></div>
+				<div class="sla"><input type="submit" id="btn_confirmacao_recarga" value="Voltar ao menu inicial"></div>
+			</div>
+		</div>
+		</form>
+	</div>
+</body>
+</html>

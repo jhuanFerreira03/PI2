@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/reset.css">
+	<link rel="stylesheet" type="text/css" href="/css/estilo.css">
+    <script src="/javascript/front.js"></script>
+    <title>Código</title>
+</head>
+<body>
+    <script>
+        console.log(lista);
+    </script>
+    <div style="margin-top: 8%; font-weight: bold;"><h1>Bilhete Gerado Com Sucesso!</h1></div>
+    <div style="margin-top: 13%; margin-bottom: 5%; margin-left: 38%;"><span class="tela_confirma">Codigo: </span> <span class="tela_confirma2"><%=codigo%></span><br><span class="tela_confirma"> Data de Geração: </span><span class="tela_confirma2"><%=data%></span><span class="tela_confirma"> às </span><span class="tela_confirma2"><%=horario%></span></span></div>
+    <!--<input type="text" id="cod_ger" name="cod_ger" placeholder="Digite o código">-->
+    <input id="btn_confirma_bilhete" type="button" name="btn_confirma_bilhete" value="Voltar ao menu principal" onclick="Voltar_Princ();">
+</body>
+</html>

@@ -1,0 +1,145 @@
+async function run (par){
+    console.log(par)
+    process.env.ORA_SDTZ = 'UTC-3'; // garante horário de Brasília
+    let connection;
+    //conexão com o banco de dados
+    try{
+        connection = await oracledb.getConnection({user: "system", password: "415482", connectionString: "localhost"});
+        console.log("banco de dados conectado com sucesso!");
+
+        //inserindo registros
+
+        const sql = 'insert into BILHETE(COD_BILHETE) values (:0);';
+        const dados = [par];
+        let result = await connection.execute(sql, dados);
+        connection.commit();
+        console.log(result.rowsAffected, "adicionados");
+    }
+    catch(erro){
+        console.log(erro);
+    }
+    finally{
+        if (connection){
+            try{
+                await connection.close();
+            }
+            catch(erro){
+                console.error(erro);
+            }
+        }
+    }
+}
+
+
+function BD ()
+{
+	process.env.ORA_SDTZ = 'UTC-3';
+	
+	this.getConexao = async function ()
+	{
+		if (global.conexao)
+			return global.conexao;
+
+        const oracledb = require('oracledb');
+        
+        try
+        {
+		    global.conexao = await oracledb.getConnection({user: "system", password: "415482", connectionString: "localhost"});
+		}
+		catch (erro)
+		{
+			console.log ('Não foi possível estabelecer conexão com o BD!');
+			process.exit(1);
+		}
+
+		return global.conexao;
+	}
+
+}
+
+
+<!--<div>
+			<div style="margin: 0 auto;">
+				<div class="escolha_recarga">
+					<img src="../imagens/img2.png">
+					<h1><a class="link_rec" href="javascript: abrir();" onclick="alert('fodase')" onmouseover="javascript: abrir('popup_40_min');" onmouseout="javascript: fechar('popup_40_min');">Recarga de 40 minutos</a></h1>
+				</div>
+				<div class="escolha_recarga">
+					<h1><a class="link_rec" href="javascript: abrir();" onmouseover="javascript: abrir('popup_1_dia');" onmouseout="javascript: fechar('popup_1_dia');">Recarga de 1 dia</a></h1>
+				</div>
+				<div class="escolha_recarga">
+					<h1><a class="link_rec" href="javascript: abrir();" onmouseover="javascript: abrir('popup_1_sem');" onmouseout="javascript: fechar('popup_1_sem');">Recarga de 1 semana</a></h1>
+				</div>
+				<div class="escolha_recarga">
+					<h1><a class="link_rec" href="javascript: abrir();" onmouseover="javascript: abrir('popup_1_mes');" onmouseout="javascript: fechar('popup_1_mes');">Recarga de 1 mes</a></h1>
+				</div>
+				<div id="popup_40_min" class="popup">recarga de 40 minutos<br>Valor:15 conto</div>
+				<div id="popup_1_dia" class="popup">recarga de 1 dia<br>Valor:20 conto</div>
+				<div id="popup_1_sem" class="popup">recarga de 1 semana<br>Valor:25 conto</div>
+				<div id="popup_1_mes" class="popup">recarga de 1 mes<br><h4 style="color: red;">Valor:30 conto</h4></div>
+				<input type="text" id="tipo_escolha" name="tipo_escolha" style="display: none;">
+				<input type="text" id="data_escolha" name="data_escolha" style="display: none;">
+			</div>
+		</div>
+		<div style="margin-top: 120px;">
+			<span id="div_voltar" class="sla1">
+				<input id="btn_voltar_recarga" type="button" name="btn_voltar_recarga" value="Voltar" onclick="voltar();">
+			</span>
+			<span id="div_avancar" class="sla1">
+				<input id="btn_avancar_recarga" type="submit" value="Avançar" onclick="avancar(); Recarregar();">-->
+				<!--<input id="btn_avancar_recarga" type="submit" name="btn_avancar_recarga" value="Aceitar" onclick="avancar();">-->
+			<!--</span>
+		</div>-->
+
+
+
+/*.neon{
+	font-size: 1.5em;
+	font-weight: bold;
+	text-decoration: none;
+	line-height: 200%;
+
+	display: block;
+	color: #f1b;
+	padding: 16px 16px;
+	border: solid 8px #f1b;
+	border-radius: 16px;
+
+	box-shadow: inset 0 0 5px 0 #f1b, 0 0 5px 0 #f1b;
+
+	position: relative;
+}
+.neon::before {
+	content: "";
+	position: absolute;
+	left: 0;
+
+	background: #f1b;
+
+	width: 100%;
+	height: 100%;
+	filter: blur(64px);
+	opacity: 0.7;
+	pointer-events: none;
+}
+.neon::after{
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	box-shadow: 0 0 128px 32px #f1b;
+	opacity: 0;
+	background-color: #f1b;
+	z-index: -1;
+	transition: opacity 100ms linear;
+}
+.neon:hover::before,
+.neon:hover::after{
+	 opacity: 0.4;
+}
+.neon:hover{
+	color: #31202b;
+	text-shadow: none;
+}*/
