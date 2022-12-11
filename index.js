@@ -1,3 +1,5 @@
+const { lstat } = require('fs');
+
 //  Funçao Conecta com BD
 function BD ()
 {
@@ -91,7 +93,7 @@ function Recarga(bd){
         try{
             conexao = await bd.getConexao();
 
-            const sql1 = 'INSERT INTO Recarga VALUES (:0, SYSDATE, :1)';
+            const sql1 = 'INSERT INTO Recarga (tipo, data_recarga, codigo) VALUES (:0, SYSDATE, :1)';
             const dados = [tipo, codigo];
             await conexao.execute(sql1,dados);
 
@@ -108,10 +110,12 @@ function Recarga(bd){
 
             //const sql = "SELECT cod_bilhete, to_char(data_geração, 'HH24:MI:SS DD-MON-RRRR') DATA FROM Bilhete";
             //const sql = "SELECT cod_bilhete, DATA_geração FROM Bilhete";
-            const sql = "SELECT * FROM recarga where cod_bilhete = :0";
+            const sql = "SELECT * FROM recarga where codigo = :0";
 		    const dados = [codigo];
 		    ret =  await conexao.execute(sql, dados);
-		    lista.push(ret);
+		    for(let i = 0; i<ret.rows.length; i++){
+                lista.push(ret.rows[i]);
+            }
         }
         catch(erro){
             console.log("Erro de conexão!" + erro);
@@ -137,8 +141,126 @@ function Recarga(bd){
         }
     }
 }
+function Uso(bd){
+    this.bd = bd;
+    this.inclua = async function(codigo){
+        try{
+            conexao = await bd.getConexao();
 
+            const sql1 = 'INSERT INTO Uso VALUES (SYSDATE, :0)';
+            const dados = [codigo];
+            await conexao.execute(sql1,dados);
 
+            const sql2 = 'COMMIT';
+            await conexao.execute(sql2);
+        }
+        catch(erro){
+            console.log("Erro de conexão!" + erro);
+        }
+    }
+    this.recupera_all = async function(lista){
+        try{
+            conexao = await bd.getConexao();
+
+            const sql = 0;
+		    ret =  await conexao.execute("SELECT * FROM Uso");
+            console.log(ret.rows);
+            for(let i = 0 ; i < ret.rows.length; i++){
+                lista.push(ret.rows[i]);
+            }
+        }
+        catch(erro){
+            console.log("Erro de conexão!" + erro);
+        }
+    }
+    
+}
+
+function Verifica(lista, codigo, def){
+    for(let i = 0; i<lista.length; i++){
+        if(parseInt(codigo) == parseInt(lista[i][def])){
+            console.log(lista[i][def]);
+            return true;
+        }
+    }
+    return false;
+}
+
+function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false){
+    for(let i = 0; i<lista.length ; i++){
+        if(parseInt(codigo) == parseInt(lista[i][2])){
+            if(lista[i][0] == tipo){
+                let count = 0;
+                for(let j = 0; j < lista_uso.length; j++){
+                    if(lista[i][3] == lista_uso[j][1]){
+                        if(count == 0){
+                            let data_atual = new Date();
+                            let data_ativacao = new Date(lista_uso[j][0]);
+                            if(tipo == 'Bilhete Unico'){
+                                if(data_atual.getTime() - data_ativacao.getTime() <= 2400000){
+                                    if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                                    return true;
+                                }
+                                else{
+                                    return false;
+                                }
+                            }
+                            else if(tipo == 'Bilhete Duplo'){
+                                let prox;
+                                let data_prox;
+                                let count2 = 0;
+                                for(let s = 0; s<lista_uso.length; s++){
+                                    if(lista_uso[s][1] == lista_uso[j][1]){
+                                        if(lista_uso[s][0].getTime() - lista_uso[j][1] >= 2400000){
+                                            prox = new Date(lista_uso[s][0]);
+                                            count += 1;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(count2 == 0){
+                                    if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                                    return true;
+                                }
+                                else{
+                                    if(data_atual.getTime() - data_prox.getTime() <= 2400000){
+                                        if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                                        return true;
+                                    }
+                                    else{
+                                        return false;
+                                    }
+                                }
+                            }
+                            else if(tipo == 'Bilhete De Sete Dias'){
+                                if(data_atual.getTime() - data_ativacao.getTime() <= 604800000){
+                                    if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                                    return true;
+                                }
+                                else{
+                                    return false;
+                                }
+                            }
+                            else if(tipo == 'Bilhete De Trinta Dias'){
+                                if(data_atual.getTime() - data_ativacao.getTime() <= 2592000000){
+                                    if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                                    return true;
+                                }
+                                else{
+                                    return false;
+                                }
+                            }
+                        }
+                        count += 1;
+                    }
+                }
+                if(salvar == true){uso.inclua(lista[i][3]); lista_uso = []; uso.recupera_all(lista_uso);}
+                return true;
+            }
+        }
+    }
+    return false;
+}
 
 //  Módulos
 const express = require('express');
@@ -152,14 +274,16 @@ const bd = new BD();
 const handlebars = require('express-handlebars');
 const { builtinModules } = require('module');
 
+app.set('view engine', 'ejs');
+
 
 //  BodyParser
 //app.engine('handlebars', handlebars.engine({defaultLayout: 'main'}));
 
-app.set('view engine', 'ejs');
 
 const bilhete = new Bilhete(bd);
 const recarga = new Recarga(bd);
+const uso = new Uso(bd);
 
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -169,68 +293,100 @@ app.use(express.static(path.join(__dirname, "public")));
 
 let lista_bilhete = new Array();
 let lista_recarga = new Array();
+let lista_uso = new Array();
+
+let meses = new Array();
+meses[0] = 'JAN';
+meses[1] = 'FEV';
+meses[2] = 'MAR';
+meses[3] = 'ABR';
+meses[4] = 'MAI';
+meses[5] = 'JUN';
+meses[6] = 'JUL';
+meses[7] = 'AGO';
+meses[8] = 'SET';
+meses[9] = 'OUT';
+meses[10] = 'NOV';
+meses[11] = 'DEZ';
 
 
 bilhete.recupera_all(lista_bilhete);
 recarga.recupera_all(lista_recarga);
+uso.recupera_all(lista_uso);
 
 
 //  Rotas
 
-app.post('/form_codigo/:def?', (req, res) => {
-    let ver = false;
-    for(let i = 0; i<lista_recarga.length; i++){
-        console.log(lista_recarga[i][2]);
-        if(req.body.cod_ger == lista_recarga[i][2]){
-            ver = true;
-            break;
-        }
-    }
-    if(ver === true){
-        console.log('fodase mermao');
-        if(req.params.def == 'relatorio'){
-            console.log('fodase mermao');
-            res.redirect(`/gerenciamento/${req.body.cod_ger}`);
-        }
-        else if(req.params.def == 'uso'){
-            console.log('fodase mermao');
-            res.redirect(`/uso/${req.body.cod_ger}`);
-        }
-    }
-    else{
-        res.redirect('error');
-    }
+app.get('/recarga_ja_jeita/:codigo?/:tipo?', (req, res) => {
+    res.render('recarga_ja_feita', {codigo: req.params.codigo, tipo: req.params.tipo});
 })
-app.get('/confirmacao/:codigo?/:data?/:horario?', (req, res) => {
-    res.render('confirma', {codigo: req.params.codigo, data: req.params.data, horario: req.params.horario});
+app.get('/confirmacao_recarga/:codigo?/:data?/:horario?', (req, res) => {
+    res.render('confirma_recarga');
 })
-app.get('/error', (req, res) => {
-    res.render('error');
+app.get('/confirmacao_geracao/:codigo?/:data?/:horario?', (req, res) => {
+    res.render('confirma_geracao', {codigo: req.params.codigo, data: req.params.data, horario: req.params.horario});
+})
+app.get('/error/:def?/:mensagem_erro?', (req, res) => {
+    res.render('error', {erro:req.params.mensagem_erro, def: req.params.def});
 })
 app.get('/dig_cod/:def?', (req, res) => {
-    res.render('codigo', {lista: lista_recarga, def: req.params.def});
+    res.render('codigo', {lista: lista_bilhete, def: req.params.def});
 })
 app.get('/gerenciamento/:codigo?', function (req, res){
-    res.render(`gerenciamento`, {lista: lista_recarga, codigo: req.params.codigo});
-    //console.log(lista[1][0]);
+
+    let data;
+    let ver;
+    ver = false;
+    for(let i = 0; i<lista_bilhete.length; i++){
+        if(lista_bilhete[i][0] == req.params.codigo){
+            data = new Date(lista_bilhete[i][1]);
+        }
+    }
+
+
+    let horario_atual = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`;
+    let data_atual = `${data.getDate()}-${meses[data.getMonth()]}-${data.getFullYear()}`;
+
+    res.render(`gerenciamento`, {lista: lista_recarga, lista2:lista_bilhete, codigo: req.params.codigo, data: data_atual, horario: horario_atual});
 })
-app.get('/uso/:codigo?', (req, res) => {
-    res.render('uso', {lista: lista_recarga, codigo: req.params.codigo});
+app.get('/uso/:codigo?/:tipo?', (req, res) => {
+    let data = new Date();
+    let result
+    if(req.params.tipo == 'Bilhete Unico'){result = data.getTime() + 2400000}
+    if(req.params.tipo == 'Bilhete Duplo'){result = data.getTime() + 2400000}
+    if(req.params.tipo == 'Bilhete de Sete Dias'){result = data.getTime() + 604800000}
+    if(req.params.tipo == 'Bilhete de Trinta Dias'){result = data.getTime() + 2592000000}
+    let prox = new Date(result);
+    res.render('uso', {codigo: req.params.codigo, tipo: req.params.tipo, data: prox});
 })
-app.get('/tela_inicial.html', function(req, res){
+app.get('/home', function(req, res){
     res.sendFile(__dirname + "/html/tela_inicial.html");
     console.log(lista_bilhete);
 })
-app.get('/tela_recarga.html', function(req, res) {
-    res.sendFile(__dirname + "/html/tela_recarga.html");
+app.get('/recarga/:codigo?', function(req, res) {
+    res.render('recarga', {codigo: req.params.codigo});
 })
-app.get('/tela_gerar_bilhete.html', function(req, res) {
+app.get('/gerar_bilhete', function(req, res) {
     res.sendFile(__dirname + "/html/tela_gerar_bilhete.html");
 })
-app.get('/tela_termo.html', function(req, res){
+app.get('/termo', function(req, res){
     res.sendFile(__dirname + "/html/tela_termo.html");
 })
-app.post('/formulario1', function(req, res){
+
+
+
+app.post('/voltar_relatorio', (req, res) => {
+    res.redirect('/dig_cod/relatorio');
+})
+app.post('/voltar_rec/:codigo?', (req, res) => {
+    res.redirect(`/recarga/${req.params.codigo}`);
+})
+
+app.post('/erro/:def?', (req, res) => {
+    res.redirect(`/dig_cod/${req.params.def}`);
+})
+
+app.post('/form_gerar', function(req, res){
     let ver;
     let cod = Math.floor(Math.random() * (10000 - 1000) + 1000);
     do{
@@ -246,40 +402,65 @@ app.post('/formulario1', function(req, res){
     }while(ver != false);
 
 
-    let meses = new Array();
-    meses[0] = 'JAN';
-    meses[1] = 'FEB';
-    meses[2] = 'MAR';
-    meses[3] = 'ABR';
-    meses[4] = 'MAY';
-    meses[5] = 'JUN';
-    meses[6] = 'JUL';
-    meses[7] = 'AUG';
-    meses[8] = 'SEP';
-    meses[9] = 'OCT';
-    meses[10] = 'NOV';
-    meses[11] = 'DEC';
     bilhete.inclua(cod);
     bilhete.recupera_one(cod, lista_bilhete);
     let data = new Date();
     let horario_atual = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`;
     let data_atual = `${data.getDate()}-${meses[data.getMonth()]}-${data.getFullYear()}`;
 
-    res.redirect(`/confirmacao/${cod}/${data_atual}/${horario_atual}`);
+    res.redirect(`/confirmacao_geracao/${cod}/${data_atual}/${horario_atual}`);
 })
-app.post('/formulario2', function(req, res){
-    //console.log(req.body.cod_bilhete, req.body.salvar_data, req.body.salvar_tipo);
-    recarga.inclua(req.body.cod_bilhete, req.body.salvar_tipo);
-    recarga.recupera_one(req.body.cod_bilhete, lista_recarga);
-    for(let i = 0; i<lista.length; i++){
-        if(parseInt(req.body.cod_bilhete) === lista_bilhete[i][0]){
-            console.log("encontrado");
+
+app.post('/form_recarga/:codigo?', function(req, res){
+    console.log(Verifica(lista_recarga, req.params.codigo, 2));
+    console.log(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo));
+    if(Verifica(lista_recarga, req.params.codigo, 2)){
+        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === false){
+            recarga.inclua(req.params.codigo, req.body.salvar_tipo);
+            recarga.recupera_one(req.params.codigo, lista_recarga);
+            res.redirect(`/confirmacao_recarga`);
         }
         else{
-            console.log("nao en");
+            res.redirect(`/recarga_ja_jeita/${req.params.codigo}/${req.body.salvar_tipo}`);
         }
     }
-    res.redirect(`/gerenciamento/${lista_bilhete}`);
+    else{
+        console.log(lista_recarga);
+        recarga.inclua(req.params.codigo, req.body.salvar_tipo);
+        recarga.recupera_one(req.params.codigo, lista_recarga);
+        res.redirect(`/confirmacao_recarga`);
+    }
+})
+
+app.post('/form_codigo/:def?', (req, res) => {
+    //console.log(Verifica(lista_bilhete, req.body.cod_ger, 0));
+    if(Verifica(lista_bilhete, req.body.cod_ger, 0)){
+        if(req.params.def == 'relatorio'){
+            res.redirect(`/gerenciamento/${req.body.cod_ger}`);
+        }
+        else if(req.params.def == 'uso'){
+            if(Verifica(lista_recarga, req.body.cod_ger, 2) == false){
+                res.redirect('/error/uso/Este código não possui nenhuma recarga ativa!');
+            }
+            else{
+                if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true)){res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true)){res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Sete Dias', true)){res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Sete Dias`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Trinta Dias', true)){res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Trinta Dias`);}
+                else{
+                    res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
+                }
+            }
+            //res.render('uso', {lista: lista_recarga, codigo: req.params.codigo});
+            //res.redirect(`/uso/${req.body.cod_ger}`);
+        }
+        else if(req.params.def == 'recarga'){
+            res.redirect(`/recarga/${req.body.cod_ger}`);
+        }
+    }
+    else{
+        res.redirect(`/error/${req.params.def}/Código não encontrado!`);
+    }
 })
 
 

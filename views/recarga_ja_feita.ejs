@@ -3,17 +3,17 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>ERRO</title>
+		<title>Aviso</title>
 		<link rel="stylesheet" type="text/css" href="/css/reset.css">
 		<link rel="stylesheet" type="text/css" href="/css/estilo.css">
 		<script src="/javascript/front.js"></script>
 	</head>
 	<body>
 		<div id="principal">
-				<div id="div_top"><h2 style="color: red; padding-top: 20%; margin: 0 auto; text-align: center; font-size: 2.5em;"><%=erro%></h2></div>
+				<div id="div_top"><h2 style="color: red; padding-top: 20%; margin: 0 auto; text-align: center; font-size: 2.5em;">Já existe uma recarga do tipo <%=tipo%> não expirada no Bilhete <%=codigo%></h2></div>
 				<div class="sla1" class="sla" style="margin-top: 260px;">
-                    <form action="/erro/<%=def%>" method="post">
-					    <input id="btn_voltar_erro" type="submit" name="btn_voltar_erro" value="Voltar" onclick="Voltar_Cod(def);" style="width: 20%; margin-top: 8%;height: 40px;">
+                    <form action="/voltar_rec/<%=codigo%>" method="post">
+					    <input id="btn_voltar_erro" type="submit" name="btn_voltar_erro" value="Voltar" onclick="" style="width: 20%; margin-top: 8%;height: 40px;">
                     </form>
 				</div>
 		</div>

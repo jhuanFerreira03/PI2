@@ -72,13 +72,21 @@ input[type="button"]#btn_avancar_gerar:hover{
 	color: #fff;
 }
 
+input[type="submit"]#btn_voltar_erro:hover{
+	background-color: #01A9DB;
+	color: #fff;
+}
+input[type="button"]#btn_voltar_cod:hover{
+	background-color: #01A9DB;
+	color: #fff;
+}
 
 
 input[type="button"]#btn_cancelar_recarga:hover{
 	background-color: #01A9DB;
 	color: #fff;
 }
-input[type="button"]#btn_salvar_recarga:hover{
+input[type="submit"]#btn_salvar_recarga:hover{
 	background-color: #01A9DB;
 	color: #fff;
 }
@@ -111,7 +119,10 @@ input[type="button"]#btn_avancar_gerar:active{
 input[type="button"]#btn_voltar_recarga:active{
 	background-color: #58D3F7;
 }
-input[type="submit"]#btn_avancar_recarga:active{
+input[type="button"]#btn_avancar_recarga:active{
+	background-color: #58D3F7;
+}
+input[type="submit"]#btn_salvar_recarga:active{
 	background-color: #58D3F7;
 }
 
@@ -120,6 +131,13 @@ input[type="submit"]#btn_imp_recarga:active{
 }
 
 input[type="button"]#btn_confirma_bilhete:active{
+	background-color: #58D3F7;
+}
+
+input[type="submit"]#btn_voltar_erro:active{
+	background-color: #58D3F7;
+}
+input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 }
 
@@ -339,6 +357,37 @@ input[type="button"]#btn_confirma_bilhete:active{
 	color: black;
 	font-size: 1.5em;
 }
+
+#btn_voltar_erro {
+	color: black;
+	margin-top: 60px;
+	height: 20%;
+	font-size: 1.2em;
+	width: 40%;
+	background-color: #58D3F7;
+	border-radius: 5px;
+	border: solid 3px #2ECCFA;
+}
+#btn_voltar_cod{
+	color: black;
+	margin-top: 60px;
+	height: 20%;
+	font-size: 1.2em;
+	width: 40%;
+	background-color: #58D3F7;
+	border-radius: 5px;
+	border: solid 3px #2ECCFA;
+}
+#btn_voltar_relatorio{
+	color: black;
+	margin-top: 60px;
+	height: 20%;
+	font-size: 1.2em;
+	width: 40%;
+	background-color: #58D3F7;
+	border-radius: 5px;
+	border: solid 3px #2ECCFA;
+}
 .escolha_recarga{
 	padding-top: 10px;
 	margin: 0 auto;
@@ -376,7 +425,7 @@ input[type="button"]#btn_confirma_bilhete:active{
 	width: 900px;
 	height: 650px;
 	padding: 15px;
-	border: solid 5px green;
+	border: solid 5px #01A9DB;
 	border-radius: 8px;
 	background-color: white;
 	display: none;
@@ -407,6 +456,15 @@ input[type="button"]#btn_confirma_bilhete:active{
 	color: black;
 	text-align: left;
 	text-indent: 220px;
+}
+.geren_float {
+	float: left;
+	display: inline;
+	width: 45%;
+}
+.msn_uso{
+	margin-top: 15%;
+	color: #01A9DB;
 }
 .escolhido {
 	height: 235px;

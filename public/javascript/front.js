@@ -1,14 +1,22 @@
 //  ALL
 
 function Voltar_Princ(){
-    window.location.href = '/tela_inicial.html';
+    window.location.href = '/home';
+}
+
+function Voltar_Cod(def){
+    window.location.href = `/dig_cod/${def}`;
+}
+
+function Voltar_Recarga(cod){
+    window.location.href = `/recarga/${cod}`;
 }
 
 
 //  TELA TERMO
 
 function avancar_termo(){
-    window.location.href = 'tela_gerar_bilhete.html';
+    window.location.href = '/gerar_bilhete';
 }
 
 
@@ -42,9 +50,6 @@ function Gerar_Bilhete(){
 
 //  TELA RECARGA
 
-function Confirmacao(){
-    document.getElementById('confirmacao').style.display = 'block';
-}
 
 function Escolher(nome){
     document.getElementById('40_min').style.border = '3px solid #01A9DB';
@@ -71,13 +76,8 @@ function Escolher(nome){
     document.getElementById('tipo_recarga').innerHTML = nome;
 }
 
-function Abrir(nome){
-    let aux = document.getElementById('cod_re').value;
-    if(aux.toString().length != 4){
-        document.getElementById('cod_re').style.borderColor = 'red';
-        return;
-    }
-    document.getElementById('cod_re').style.borderColor = '#01A9DB';
+function Abrir(nome, cod){
+    document.getElementById('cod_re').value = cod;
     if(document.getElementById('salvar_tipo').value == 0){
         alert("Escolha o tipo da recarga!");
         return;
@@ -114,11 +114,27 @@ function Data(){
     document.getElementById('data_escolha').innerHTML = `Recarga efetuada em: <span style="color: #01DF01;">${data_atual}</span> às <span style="color: #01DF01;">${horario_atual}</span>`;
 }
 
-function imp_recarga(lista){
-    console.log(lista);
-    if(document.getElementById('cod_ger').length != 4){
+function imp_recarga(i_d, i_d2){
+    document.getElementById(i_d).addEventListener('input', () => {
+        let n = document.getElementById(i_d).value;
+        if(n.length != 4){
+            document.getElementById('cod_ger').style.borderColor = 'red';
+            document.getElementById(i_d2).disabled = true;
+        }
+        else{
+            document.getElementById('cod_ger').style.borderColor = '#01A9DB';
+            document.getElementById(i_d2).disabled = false;
+        }
+    })
+}
+function imp_recarga1(){
+    if(document.getElementById('cod_ger').value.length != 4){
         document.getElementById('cod_ger').style.borderColor = 'red';
         return;
+    }
+    else{
+        document.getElementById('cod_ger').style.borderColor = '#01A9DB';
+        document.getElementById('btn_imp_recarga').setAttribute('disable', 'false');
     }
     let ver = false;
     for(let i = 0; i<lista.length; i++){
@@ -127,8 +143,7 @@ function imp_recarga(lista){
             ver = true;
         }
     }
-
-    if(!ver){
-        alert("Bilhte não encontrado!");
+    if(ver === true){
+        document.getElementById('btn_imp_recarga').submit() = false;
     }
 }

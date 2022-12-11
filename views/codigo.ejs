@@ -12,8 +12,9 @@
 <body>
     <form action="/form_codigo/<%= def%>" method="post">
         <div style="padding: 10%;"></div>
-        <input type="text" id="cod_ger" name="cod_ger" placeholder="Digite o código">
-        <input id="btn_imp_recarga" type="submit" name="btn_imp_recarga" value="Enviar" onclick="imp_recarga(lista, def);">
+        <input style="margin-bottom: 2%;" type="number" id="cod_ger" name="cod_ger" placeholder="Digite o código de 4 Casas" onkeypress="return event.charCode >= 48 && event.charCode <= 57" onfocus="imp_recarga('cod_ger', 'btn_imp_recarga');">
+        <input id="btn_imp_recarga" type="submit" name="btn_imp_recarga" value="Enviar"  disabled="true">
+        <input id="btn_voltar_cod" type="button" name="" value="Voltar" onclick="Voltar_Princ()" style="width: 20%; margin-left: 40%; margin-top: 15%;height: 40px;">
     </form>
 </body>
 </html>

@@ -10,10 +10,21 @@
     <title>Código</title>
 </head>
 <body>
-    <form action="form_codigo" method="post">
-        <div style="padding: 10%;">Uso</div>
-        <input type="text" id="cod_ger" name="cod_ger" placeholder="Digite o código">
-        <input id="btn_imp_recarga" type="submit" name="btn_imp_recarga" value="Enviar" onclick="imp_recarga(lista);">
-    </form>
+    <div id="" style="width: 80%; margin: 0 auto;">
+        <h1 style="color: red; margin-top: 6%; font-weight: bold; margin-bottom: 50px;">Bilhete: <%=codigo%></h1>
+        <%if(tipo == 'Bilhete Unico'){%>
+            <h1 class="msn_uso">O usuário tem o direito utilizar o mesmo bilhete em quantos transportes quiser, por um período de 40 minutos.</h1>
+        <%}%>
+        <%if(tipo == 'Bilhete Duplo'){%>
+            <h1 class="msn_uso">Para cada período de utilização do Bilhete duplo o usuário poderá utilizar o mesmo bilhete em quantos transportes quiser, por um período de 40 minutos.</h1>
+        <%}%>
+        <%if(tipo == 'Bilhete de Sete Dias'){%>
+            <h1 class="msn_uso">O usuário o direito de utilizar o transporte público quantas vezes quiser durante o período de 7 dias, contados apartir da primeira utilização do bilhete. </h1>
+        <%}%>
+        <%if(tipo == 'Bilhete de Trinta Dias'){%>
+            <h1 class="msn_uso">Este tipo de bilhete dará ao usuário o direito de utilizar o transporte público quantas vezes quiser durante o período de 30 dias, contados apartir da primeira utilização do bilhete. </h1>
+        <%}%>
+        <h1 style="color: black; font-size: 1.3em; margin-top: 2%;">Utilização valida até: <%=data%></h1>
+    </div>
 </body>
 </html>

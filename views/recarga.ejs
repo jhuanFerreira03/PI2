@@ -6,11 +6,11 @@
 	<title>Recarregar Bilhete</title>
 	<link rel="stylesheet" type="text/css" href="/css/reset.css">
 	<link rel="stylesheet" type="text/css" href="/css/estilo.css">
-	<script src="/javascript/front.js"></script>
+	<script src="/javascript/front.js">console.log('<%=codigo%>')</script>
 </head>
 <body>
 	<div id="principal">
-		<form action="" method="post">
+		<form action="/form_recarga/<%= codigo %>" method="post">
 		<!--<div class="sla1" id="div_top_recarga"><h1 style="font-weight:bold;">Recarga de Bilhete</h1></div>-->
 		<div style="padding-bottom: 100px;">
 		</div>
@@ -64,7 +64,7 @@
 			</span>
 			<span id="div_avancar" class="sla1">
 				<!--<input id="btn_avancar_recarga" type="submit" value="Avançar" onclick="avancar(); Recarregar();">-->
-				<input id="btn_avancar_recarga" type="button" name="btn_avancar_recarga" value="Avançar" onclick="Abrir('confirmacao_recarga');">
+				<input id="btn_avancar_recarga" type="button" name="btn_avancar_recarga" value="Avançar" onclick="Abrir('confirmacao_recarga', '<%=codigo%>');">
 			</span>
 		</div>
 		<div id="confirmacao_recarga" class="popup">
