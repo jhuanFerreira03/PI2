@@ -11,7 +11,8 @@
 </head>
 <body>
     <div id="" style="width: 80%; margin: 0 auto;">
-        <h1 style="color: red; margin-top: 6%; font-weight: bold; margin-bottom: 50px;">Bilhete: <%=codigo%></h1>
+        <h1 style="color: Black; margin-top: 6%; font-weight: 0; margin-bottom: 50px;">Bilhete: <span class="azul"><%=codigo%></span></h1>
+        <h1 style="color: #3ADF00; margin-top: 6%; font-weight: bold; margin-bottom: 50px;">Recarga do tipo <%=tipo%> ativa</h1>
         <%if(tipo == 'Bilhete Unico'){%>
             <h1 class="msn_uso">O usuário tem o direito utilizar o mesmo bilhete em quantos transportes quiser, por um período de 40 minutos.</h1>
         <%}%>
@@ -24,7 +25,12 @@
         <%if(tipo == 'Bilhete de Trinta Dias'){%>
             <h1 class="msn_uso">Este tipo de bilhete dará ao usuário o direito de utilizar o transporte público quantas vezes quiser durante o período de 30 dias, contados apartir da primeira utilização do bilhete. </h1>
         <%}%>
-        <h1 style="color: black; font-size: 1.3em; margin-top: 2%;">Utilização valida até: <%=data%></h1>
+        <h1 style="color: black; font-size: 1.3em; margin-top: 2%; font-weight: bold;">Utilização valida até: <span class="vermelho"><%=data%></span> ás <span class="vermelho"><%=horario%></span></h1>
+    </div>
+    <div>
+    <form action="/erro/uso" method="post">
+        <input id="btn_voltar_uso" type="submit" name="" value="Voltar" onclick="" style="width: 20%; margin-top: 10%; margin-bottom: 2%; margin-left: 40%; height: 40px; ">
+    </form>
     </div>
 </body>
 </html>

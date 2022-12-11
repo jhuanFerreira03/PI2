@@ -105,6 +105,15 @@ input[type="button"]#btn_confirma_bilhete:hover{
 	background-color: #01A9DB;
 	color: #fff;
 }
+input[type="submit"]#btn_voltar_uso:hover{
+	background-color: #01A9DB;
+	color: #fff;
+}
+input[type="submit"]#btn_voltar_relatorio:hover{
+	background-color: #01A9DB;
+	color: #fff;
+}
+
 
 
 input[type="submit"]#btn_gerar_codigo:active{
@@ -140,19 +149,15 @@ input[type="submit"]#btn_voltar_erro:active{
 input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 }
+input[type="submit"]#btn_voltar_uso:active{
+	background-color: #58D3F7;
+}
+input[type="submit"]#btn_voltar_relatorio:active{
+	background-color: #58D3F7;
+}
 
 
-/*input {
-	margin: 120px;
-    padding: 12px;
-    width: 65%;
-    height: 30%;
-    background-color: rgb(95, 34, 18);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.7em;
-}*/
+
 #div_top_recarga{
 	padding-top: 100px;
 	margin-bottom: 80px;
@@ -239,6 +244,7 @@ input[type="button"]#btn_voltar_cod:active{
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
 	margin: 0px auto;
+	cursor: pointer;
 }
 #btn_imp_recarga {
 	padding: 5px;
@@ -256,6 +262,7 @@ input[type="button"]#btn_voltar_cod:active{
 	border: solid 3px #2ECCFA;
 	margin: 0px auto;
 	margin-top: 40px;
+	cursor: pointer;
 }
 #btn_confirma_bilhete {
 	padding: 5px;
@@ -273,6 +280,7 @@ input[type="button"]#btn_voltar_cod:active{
 	border: solid 3px #2ECCFA;
 	margin: 0px auto;
 	margin-top: 40px;
+	cursor: pointer;
 }
 
 #btn_voltar_gerar{
@@ -284,6 +292,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_avancar_gerar{
 	color: black;
@@ -294,6 +303,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_voltar_recarga{
 	color: black;
@@ -303,6 +313,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_avancar_recarga{
 	color: black;
@@ -312,6 +323,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_salvar_recarga{
 	color: black;
@@ -321,6 +333,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_cancelar_recarga{
 	color: black;
@@ -330,6 +343,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_confirmacao_recarga{
 	color: black;
@@ -339,6 +353,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 
 #rec_form {
@@ -367,6 +382,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_voltar_cod{
 	color: black;
@@ -377,6 +393,7 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 #btn_voltar_relatorio{
 	color: black;
@@ -387,6 +404,18 @@ input[type="button"]#btn_voltar_cod:active{
 	background-color: #58D3F7;
 	border-radius: 5px;
 	border: solid 3px #2ECCFA;
+	cursor: pointer;
+}
+#btn_voltar_uso{
+	color: black;
+	margin-top: 60px;
+	height: 20%;
+	font-size: 1.2em;
+	width: 40%;
+	background-color: #58D3F7;
+	border-radius: 5px;
+	border: solid 3px #2ECCFA;
+	cursor: pointer;
 }
 .escolha_recarga{
 	padding-top: 10px;
@@ -460,7 +489,7 @@ input[type="button"]#btn_voltar_cod:active{
 .geren_float {
 	float: left;
 	display: inline;
-	width: 45%;
+	width: 30%;
 }
 .msn_uso{
 	margin-top: 15%;
@@ -497,9 +526,6 @@ input[type="button"]#btn_voltar_cod:active{
 	clear: both;
 }
 
-/*
-	******
-*/
 
 .produtos{
     margin: 0 auto;

@@ -11,6 +11,11 @@
 </head>
 <body >
     <div id="principal">
+        <div style="margin-top: 50px;">
+            <form action="/voltar_relatorio" method="post">
+                <input id="btn_voltar_relatorio" type="submit" name="" value="<" onclick="" style="width: 2.5%; margin-top: 0%; margin-bottom: 2%; margin-left: 0%; height: 40px; border-radius: 100000000px; font-weight: bold; cursor: pointer;"> Voltar
+            </form>
+        </div>
         <div style="padding-top: 80px;padding-bottom: 110px; font-weight: bold;"><h1 style="color: #01A9DB;">Relatorio de Gerenciamento</h1></div>
         <div class="geren_float" >
             <h1 style="color: black; font-weight: bold; padding-left: 30%; text-align: left; font-size: 1.3em; padding-top: 15px;">Bilhete: <span class="azul"> <%=codigo%></span></h1><br>
@@ -21,16 +26,32 @@
             <h2 style="color:#01A9DB; padding-left: 30%; font-size: 1.3em;">Recarga(s)</h2>
             <%for(let i = 0; i < lista.length; i++) {%>
                 <% if(lista[i][2] == codigo){%>
-                    <h3 style="font-size: 1.3em; padding-left: 30%;padding-right: 10%; color:black;">Tipo: <%= lista[i][0]%><br> Data: <%= lista[i][1]%></h3><br><br>
+                    <%let horario_atual = `${lista[i][1].getHours()}:${lista[i][1].getMinutes()}:${lista[i][1].getSeconds()}`;%>
+                    <%let data_atual = `${lista[i][1].getDate()}-${meses[lista[i][1].getMonth()]}-${lista[i][1].getFullYear()}`;%>
+                    <h3 style="font-size: 1.3em; padding-left: 30%;padding-right: 10%; color:black;">Tipo: <%= lista[i][0]%><br> Data: <%= data_atual %> ás <%= horario_atual%></h3><br><br>
                 <%}%>
             <%}%>
             <div class="clear"></div>
-            <div style="margin-top: 260px;">
-                <form action="/voltar_relatorio" method="post">
-                    <input id="btn_voltar_relatorio" type="submit" name="" value="Voltar" onclick="" style="width: 20%; margin-top: 2%; margin-bottom: 2%; height: 40px; ">
-                </form>
-            </div>
         </div>
+        <div class="geren_float">
+            <h2 style="color:#01A9DB; padding-left: 20%; font-size: 1.3em;">Uso(s)</h2>
+            <%for(let i = 0; i < lista.length; i++) {%>
+                <% if(lista[i][2] == codigo){%>
+                    <%let horario_atual2 = `${lista[i][1].getHours()}:${lista[i][1].getMinutes()}:${lista[i][1].getSeconds()}`;%>
+                    <%let data_atual2 = `${lista[i][1].getDate()}-${meses[lista[i][1].getMonth()]}-${lista[i][1].getFullYear()}`;%>
+                    <h3 style="font-size: 1.3em; padding-left: 20%;padding-right: 10%; color:black;">Tipo da Recarga: <%= lista[i][0]%><br>Data: <%= data_atual2 %> ás <%= horario_atual2%></h3><br><br>
+                    <%for(let j = 0; j < lista3.length; j++){%>
+                        <%if(lista[i][3] == lista3[j][1]){%>
+                            <%let horario_atual3 = `${lista3[j][0].getHours()}:${lista3[j][0].getMinutes()}:${lista3[j][0].getSeconds()}`;%>
+                            <%let data_atual3 = `${lista3[j][0].getDate()}-${meses[lista3[j][0].getMonth()]}-${lista3[j][0].getFullYear()}`;%>
+                            <h3 style="font-size: 1.3em; padding-left: 40%;padding-right: 10%; color:black;">Data de Uso: <%= data_atual3%> ás <%=horario_atual3%></h3><br><br>
+                        <%}%>
+                    <%}%>
+                <%}%>
+            <%}%>
+            <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
     </div>
 </body>
 </html>
