@@ -107,7 +107,6 @@ function Recarga(bd){
             for(let i = 0; i<ret.rows.length; i++){
                 lista.push(ret.rows[0]);
             }
-
         }
         catch(erro){
             console.log("Erro de conexão!" + erro);
@@ -241,30 +240,30 @@ recarga.recupera_all(lista_recarga);
 uso.recupera_all(lista_uso);
 
 
-function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_data){
+
+
+function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_data, salvar_p = false){
     for(let i = 0; i<lista.length ; i++){ 
         if(parseInt(codigo) == parseInt(lista[i][2])){
-            if(lista[i][0] == tipo){
                 let count = 0;
+                if(lista[i][0] == tipo){
                 for(let j = 0; j < lista_uso.length; j++){
-                    console.log('enttrei no for1')
                     if(lista[i][3] == lista_uso[j][2]){
                         let data_ativacao = new Date(lista_uso[j][1]);
                         let data_atual = new Date();
                         if(tipo == 'Bilhete Unico'){
-                            console.log('entrei no unico')
                             if(data_atual.getTime() - data_ativacao.getTime() <= 2400000){
                                 if(salvar == true){
+                                    console.log('bilhete');
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return true;
+                                return 0;
                             }
                             else{
-                                return false;
+                                return -1;
                             }
                         }
                         else if(tipo == 'Bilhete Duplo'){
-                            console.log('entrei no duplo')
                             let data_prox;
                             let count2 = 0;
                             for(let s = 0; s<lista_uso.length; s++){
@@ -280,53 +279,52 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return true;
+                                return 0;
                             }
                             else{
                                 if(data_atual.getTime() - data_prox.getTime() <= 2400000){
                                     if(salvar === true){
                                         uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_prox); 
                                     }
-                                    return true;
+                                    return 0;
                                 }
                                 else{
-                                    return false;
+                                    return -1;
                                 }
                             }
                         }
-                        else if(tipo == 'Bilhete de Sete Dias'){
-                            console.log('entrei no sete dias')
-                            
+                        else if(tipo == 'Bilhete de Sete Dias'){ 
                             if(data_atual.getTime() - data_ativacao.getTime() <= 604800000){
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return true;
+                                return 0;
                             }
                             else{
-                                return false;
+                                return -1;
                             }
                         }
-                        else if(tipo == 'Bilhete De Trinta Dias'){
+                        else if(tipo == 'Bilhete de Trinta Dias'){
                             if(data_atual.getTime() - data_ativacao.getTime() <= 2592000000){
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return true;
+                                return 0;
                             }
                             else{
-                                return false;
+                                return -1;
                             }
                         }
                     }               
                 }
-                if(salvar == true){uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(new Date());}
-                console.log('fodase mermao');
-                return true;
+                if(salvar_p == true){uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(new Date()); return 0}
+                console.log('fodase mermao dddddd');
+                return 1;
             }
+                
         }
     }
-    return false;
+    return -1;
 }
 
 //  Rotas
@@ -443,7 +441,7 @@ app.post('/form_recarga/:codigo?', function(req, res){
     //console.log(Verifica(lista_recarga, req.params.codigo, 2));
     //console.log(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo));
     if(Verifica(lista_recarga, req.params.codigo, 2)){
-        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === false){
+        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === -1){
             recarga.inclua(req.params.codigo, req.body.salvar_tipo);
             recarga.recupera_one(req.params.codigo, lista_recarga);
             res.redirect(`/confirmacao_recarga`);
@@ -471,20 +469,31 @@ app.post('/form_codigo/:def?', (req, res) => {
                 res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
             }
             else{
-                /*let count;
-                let tipos = ['Bilhete Unico', 'Bilhete Duplo', 'Bilhete de Sete Dias', 'Bilhete de Trinta Dias'];
-                for(let i = 0; i < tipos.length; i++){
-                    if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', false, uso_data)){
-                        count += 1;
+                let tipos = ['Bilhete Unico', 'Bilhete Duplo', 'Bilhete de Sete Dias', 'Bilhete de Trinta Dias'] 
+
+                for(let i = 0; i<tipos.length;i++){
+                    console.log(tipos[i])
+                    if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 1 ){
+                        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data, true) == 0){
+                            res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
+                            break;
+                        }
                     }
-                }*/
-                if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico/${uso_data[0]}`);}
-                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo/${uso_data[0]}`);}
-                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Sete Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Sete Dias/${uso_data[0]}`);}
-                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Trinta Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Trinta Dias/${uso_data[0]}`);}
-                else{
-                    res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
+                    else if( Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 0){
+                        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data) == 0){
+                            res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
+                            break;
+                        }
+                    }
                 }
+
+                // if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico/${uso_data[0]}`);}
+                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo/${uso_data[0]}`);}
+                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Sete Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Sete Dias/${uso_data[0]}`);}
+                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Trinta Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Trinta Dias/${uso_data[0]}`);}
+                // else{
+                //     res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
+                // }
             }
         }
         else if(req.params.def == 'recarga'){
