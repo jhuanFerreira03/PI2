@@ -243,6 +243,7 @@ uso.recupera_all(lista_uso);
 
 
 function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_data, salvar_p = false){
+    let count = 0;
     for(let i = 0; i<lista.length ; i++){ 
         if(parseInt(codigo) == parseInt(lista[i][2])){
                 let count = 0;
@@ -257,10 +258,10 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                                     console.log('bilhete');
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return 0;
+                                return true;
                             }
                             else{
-                                return -1;
+                                return false;
                             }
                         }
                         else if(tipo == 'Bilhete Duplo'){
@@ -279,17 +280,17 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return 0;
+                                return true;
                             }
                             else{
                                 if(data_atual.getTime() - data_prox.getTime() <= 2400000){
                                     if(salvar === true){
                                         uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_prox); 
                                     }
-                                    return 0;
+                                    return true;
                                 }
                                 else{
-                                    return -1;
+                                    return false;
                                 }
                             }
                         }
@@ -298,10 +299,10 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return 0;
+                                return true;
                             }
                             else{
-                                return -1;
+                                return false;
                             }
                         }
                         else if(tipo == 'Bilhete de Trinta Dias'){
@@ -309,22 +310,22 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                                 if(salvar === true){
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
-                                return 0;
+                                return true;
                             }
                             else{
-                                return -1;
+                                return false;
                             }
                         }
                     }               
                 }
-                if(salvar_p == true){uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(new Date()); return 0}
+                if(salvar == true){uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(new Date()); return true}
                 console.log('fodase mermao dddddd');
-                return 1;
+                return false;
             }
                 
         }
     }
-    return -1;
+    return false;
 }
 
 //  Rotas
@@ -441,7 +442,7 @@ app.post('/form_recarga/:codigo?', function(req, res){
     //console.log(Verifica(lista_recarga, req.params.codigo, 2));
     //console.log(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo));
     if(Verifica(lista_recarga, req.params.codigo, 2)){
-        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === -1){
+        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === false){
             recarga.inclua(req.params.codigo, req.body.salvar_tipo);
             recarga.recupera_one(req.params.codigo, lista_recarga);
             res.redirect(`/confirmacao_recarga`);
@@ -469,31 +470,31 @@ app.post('/form_codigo/:def?', (req, res) => {
                 res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
             }
             else{
-                let tipos = ['Bilhete Unico', 'Bilhete Duplo', 'Bilhete de Sete Dias', 'Bilhete de Trinta Dias'] 
+                // let tipos = ['Bilhete Unico', 'Bilhete Duplo', 'Bilhete de Sete Dias', 'Bilhete de Trinta Dias'] 
 
-                for(let i = 0; i<tipos.length;i++){
-                    console.log(tipos[i])
-                    if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 1 ){
-                        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data, true) == 0){
-                            res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
-                            break;
-                        }
-                    }
-                    else if( Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 0){
-                        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data) == 0){
-                            res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
-                            break;
-                        }
-                    }
-                }
-
-                // if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico/${uso_data[0]}`);}
-                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo/${uso_data[0]}`);}
-                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Sete Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Sete Dias/${uso_data[0]}`);}
-                // else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Trinta Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Trinta Dias/${uso_data[0]}`);}
-                // else{
-                //     res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
+                // for(let i = 0; i<tipos.length;i++){
+                //     console.log(tipos[i])
+                //     if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 1 ){
+                //         if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data, true) == 0){
+                //             res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
+                //             break;
+                //         }
+                //     }
+                //     else if( Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 0){
+                //         if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data) == 0){
+                //             res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
+                //             break;
+                //         }
+                //     }
                 // }
+
+                if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico/${uso_data[0]}`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo/${uso_data[0]}`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Sete Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Sete Dias/${uso_data[0]}`);}
+                else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete de Trinta Dias', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete de Trinta Dias/${uso_data[0]}`);}
+                else{
+                    res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
+                }
             }
         }
         else if(req.params.def == 'recarga'){
