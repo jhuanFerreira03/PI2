@@ -40,6 +40,7 @@
                     <%let horario_atual2 = `${lista[i][1].getHours()}:${lista[i][1].getMinutes()}:${lista[i][1].getSeconds()}`;%>
                     <%let data_atual2 = `${lista[i][1].getDate()}-${meses[lista[i][1].getMonth()]}-${lista[i][1].getFullYear()}`;%>
                     <h3 style="font-size: 1.3em; padding-left: 20%;padding-right: 10%; color:black;">Tipo da Recarga: <%= lista[i][0]%><br>Data: <%= data_atual2 %> às <%= horario_atual2%></h3>
+                    <h2 style="color:#01A9DB; padding-left: 20%; font-size: 1.3em; margin-top: 10px;">Utilização(ões): </h2>
                     <% for(let j = 0; j < lista3.length; j++) { %>
                         <% if(lista[i][3] == lista3[j][2]){ %>
                             <% let horario_atual3 = `${lista3[j][1].getHours()}:${lista3[j][1].getMinutes()}:${lista3[j][1].getSeconds()}`; %>
