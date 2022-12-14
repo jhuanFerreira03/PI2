@@ -44,14 +44,13 @@ function Bilhete (bd)
             await conexao.execute(sql2);
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
 	}
     this.recupera_all = async function(lista){
         try{
             conexao = await bd.getConexao();
 
-            const sql = 0;
 		    ret =  await conexao.execute("SELECT * FROM Bilhete");
 
             for(let i = 0 ; i < ret.rows.length; i++){
@@ -59,7 +58,7 @@ function Bilhete (bd)
             }
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
     this.recupera_one = async function(codigo, lista){
@@ -72,7 +71,7 @@ function Bilhete (bd)
             lista.push(ret.rows[0]);
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
 }
@@ -92,7 +91,7 @@ function Recarga(bd){
             await conexao.execute(sql2);
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
     this.recupera_one = async function(codigo, lista){
@@ -101,7 +100,6 @@ function Recarga(bd){
             conexao = await bd.getConexao();
     
             const sql = "select * from Recarga where cod_recarga = (select max(cod_recarga) from Recarga)";
-            const dados = [codigo];
             let ret = await conexao.execute(sql);
 
             for(let i = 0; i<ret.rows.length; i++){
@@ -109,20 +107,19 @@ function Recarga(bd){
             }
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
     this.recupera_all = async function(lista){
         try{
             conexao = await bd.getConexao();
-            const sql = 0;
 		    ret =  await conexao.execute("SELECT * FROM recarga");
             for(let i = 0 ; i < ret.rows.length; i++){
                 lista.push(ret.rows[i]);
             }
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
 }
@@ -141,7 +138,7 @@ function Uso(bd){
             await conexao.execute(sql2);
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
     this.recupera_one = async function(lista){
@@ -149,13 +146,11 @@ function Uso(bd){
             conexao = await bd.getConexao();
 
             const sql = "select * from Uso  where id_uso = (select max(id_uso) from Uso)";
-		    //const dados = [data];
             let ret = await conexao.execute(sql)
-            console.log(ret.rows);
             lista.push(ret.rows[0]);
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
     this.recupera_all = async function(lista){
@@ -170,7 +165,7 @@ function Uso(bd){
            }
         }
         catch(erro){
-            console.log("Erro de conexão!" + erro);
+            console.log("Erro de conexão! " + erro);
         }
     }
 }
@@ -243,10 +238,8 @@ uso.recupera_all(lista_uso);
 
 
 function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_data, salvar_p = false){
-    let count = 0;
     for(let i = 0; i<lista.length ; i++){ 
         if(parseInt(codigo) == parseInt(lista[i][2])){
-                let count = 0;
                 if(lista[i][0] == tipo){
                 for(let j = 0; j < lista_uso.length; j++){
                     if(lista[i][3] == lista_uso[j][2]){
@@ -255,7 +248,6 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                         if(tipo == 'Bilhete Unico'){
                             if(data_atual.getTime() - data_ativacao.getTime() <= 2400000){
                                 if(salvar == true){
-                                    console.log('bilhete');
                                     uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
                                 }
                                 return true;
@@ -269,16 +261,23 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                             let count2 = 0;
                             for(let s = 0; s<lista_uso.length; s++){
                                 if(lista_uso[s][2] == lista_uso[j][2]){
-                                    if(lista_uso[s][1].getTime() - data_ativacao.getTime() >= 2400000){
-                                        data_prox = new Date(new Date());
+                                    if(lista_uso[s][1].getTime() - data_ativacao.getTime() > 2400000){
+                                        data_prox = new Date(lista_uso[s][1]);
                                         count2 += 1;
                                         break;
                                     }
                                 }
                             }
                             if(count2 == 0){
-                                if(salvar === true){
-                                    uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
+                                if(data_atual.getTime() - data_ativacao.getTime() <= 2400000){
+                                    if(salvar === true){
+                                        uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_ativacao);
+                                    }
+                                }
+                                else{
+                                    if(salvar === true){
+                                        uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(data_atual);
+                                    }
                                 }
                                 return true;
                             }
@@ -319,7 +318,6 @@ function Verifica_Rec_Ativa(lista, lista_uso, codigo, tipo, salvar = false, uso_
                     }               
                 }
                 if(salvar == true){uso.inclua(lista[i][3]); uso.recupera_one(lista_uso); uso_data.push(new Date()); return true}
-                console.log('fodase mermao dddddd');
                 return false;
             }
                 
@@ -345,7 +343,7 @@ app.get('/error/:def?/:mensagem_erro?', (req, res) => {
 app.get('/dig_cod/:def?', (req, res) => {
     res.render('codigo', {lista: lista_bilhete, def: req.params.def});
 })
-app.get('/gerenciamento/:codigo?', function (req, res){
+app.get('/gerenciamento/:codigo?', (req, res) => {
 
     let data;
     let ver;
@@ -359,8 +357,6 @@ app.get('/gerenciamento/:codigo?', function (req, res){
 
     let horario_atual = `${data.getHours()}:${data.getMinutes()}:${data.getSeconds()}`;
     let data_atual = `${data.getDate()}-${meses[data.getMonth()]}-${data.getFullYear()}`;
-
-    console.log(lista_recarga);
 
     res.render(`gerenciamento`, {lista: lista_recarga, lista2:lista_bilhete, codigo: req.params.codigo, data: data_atual, horario: horario_atual, lista3: lista_uso , meses: meses});
 })
@@ -377,23 +373,18 @@ app.get('/uso/:codigo?/:tipo?/:data?', (req, res) => {
     let horario_atual = `${prox.getHours()}:${prox.getMinutes()}:${prox.getSeconds()}`;
     let data_atual = `${prox.getDate()}-${meses[prox.getMonth()]}-${prox.getFullYear()}`;
 
-    //console.log(prox);
     res.render('uso', {codigo: req.params.codigo, tipo: req.params.tipo, data: data_atual, horario: horario_atual});
 })
-app.get('/home', function(req, res){
+app.get('/home', (req, res) => {
     res.sendFile(__dirname + "/html/tela_inicial.html");
-
-    /*console.log(lista_bilhete);
-    console.log(lista_recarga);
-    console.log(lista_uso);*/
 })
-app.get('/recarga/:codigo?', function(req, res) {
+app.get('/recarga/:codigo?', (req, res) => {
     res.render('recarga', {codigo: req.params.codigo});
 })
-app.get('/gerar_bilhete', function(req, res) {
+app.get('/gerar_bilhete', (req, res) => {
     res.sendFile(__dirname + "/html/tela_gerar_bilhete.html");
 })
-app.get('/termo', function(req, res){
+app.get('/termo', (req, res) => {
     res.sendFile(__dirname + "/html/tela_termo.html");
 })
 app.get('/route/:codigo?', (req, res) => {
@@ -413,7 +404,7 @@ app.post('/erro/:def?', (req, res) => {
     res.redirect(`/dig_cod/${req.params.def}`);
 })
 
-app.post('/form_gerar', function(req, res){
+app.post('/form_gerar', (req, res) => {
     let ver;
     let cod = Math.floor(Math.random() * (10000 - 1000) + 1000);
     do{
@@ -438,21 +429,26 @@ app.post('/form_gerar', function(req, res){
     res.redirect(`/confirmacao_geracao/${cod}/${data_atual}/${horario_atual}`);
 })
 
-app.post('/form_recarga/:codigo?', function(req, res){
-    //console.log(Verifica(lista_recarga, req.params.codigo, 2));
-    //console.log(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo));
+app.post('/form_recarga/:codigo?', (req, res) => {
     if(Verifica(lista_recarga, req.params.codigo, 2)){
-        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === false){
-            recarga.inclua(req.params.codigo, req.body.salvar_tipo);
-            recarga.recupera_one(req.params.codigo, lista_recarga);
-            res.redirect(`/confirmacao_recarga`);
+        if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, 'Bilhete Unico', false) === false &&
+           Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, 'Bilhete Duplo', false) === false &&
+           Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, 'Bilhete de Sete Dias', false) === false &&
+           Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, 'Bilhete de Trinta Dias', false) === false){
+            if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.params.codigo, req.body.salvar_tipo) === false){
+                recarga.inclua(req.params.codigo, req.body.salvar_tipo);
+                recarga.recupera_one(req.params.codigo, lista_recarga);
+                res.redirect(`/confirmacao_recarga`);
+            }
+            else{
+                res.redirect(`/recarga_ja_jeita/${req.params.codigo}/${req.body.salvar_tipo}`);
+            }
         }
         else{
-            res.redirect(`/recarga_ja_jeita/${req.params.codigo}/${req.body.salvar_tipo}`);
+            res.redirect(`/recarga_ja_jeita/${req.params.codigo}/`);
         }
     }
     else{
-        //console.log(lista_recarga);
         recarga.inclua(req.params.codigo, req.body.salvar_tipo);
         recarga.recupera_one(req.params.codigo, lista_recarga);
         res.redirect(`/confirmacao_recarga`);
@@ -470,23 +466,6 @@ app.post('/form_codigo/:def?', (req, res) => {
                 res.redirect('/error/uso/Nenhuma Recarga Ativa Foi Encontrada Para Este Bilhete!');
             }
             else{
-                // let tipos = ['Bilhete Unico', 'Bilhete Duplo', 'Bilhete de Sete Dias', 'Bilhete de Trinta Dias'] 
-
-                // for(let i = 0; i<tipos.length;i++){
-                //     console.log(tipos[i])
-                //     if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 1 ){
-                //         if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data, true) == 0){
-                //             res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
-                //             break;
-                //         }
-                //     }
-                //     else if( Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], false, uso_data) == 0){
-                //         if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, tipos[i], true, uso_data) == 0){
-                //             res.redirect(`/uso/${req.body.cod_ger}/${tipos[i]}/${uso_data[0]}`);
-                //             break;
-                //         }
-                //     }
-                // }
 
                 if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Unico', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Unico/${uso_data[0]}`);}
                 else if(Verifica_Rec_Ativa(lista_recarga, lista_uso, req.body.cod_ger, 'Bilhete Duplo', true, uso_data)) {res.redirect(`/uso/${req.body.cod_ger}/Bilhete Duplo/${uso_data[0]}`);}

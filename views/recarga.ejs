@@ -11,7 +11,6 @@
 <body>
 	<div id="principal">
 		<form action="/form_recarga/<%= codigo %>" method="post">
-		<!--<div class="sla1" id="div_top_recarga"><h1 style="font-weight:bold;">Recarga de Bilhete</h1></div>-->
 		<div style="padding-bottom: 100px;">
 		</div>
 		<div class="popup">
@@ -63,7 +62,6 @@
 				<input id="btn_voltar_recarga" type="button" name="btn_voltar_recarga" value="Voltar" onclick="Voltar_Princ();">
 			</span>
 			<span id="div_avancar" class="sla1">
-				<!--<input id="btn_avancar_recarga" type="submit" value="Avançar" onclick="avancar(); Recarregar();">-->
 				<input id="btn_avancar_recarga" type="button" name="btn_avancar_recarga" value="Avançar" onclick="Abrir('confirmacao_recarga', '<%=codigo%>');">
 			</span>
 		</div>
